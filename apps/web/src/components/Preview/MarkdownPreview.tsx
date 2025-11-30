@@ -1,12 +1,21 @@
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { createMarkdownParser, processHtml } from '@wemd/core';
 import { useEditorStore } from '../../store/editorStore';
 import './MarkdownPreview.css';
+
+const SYNC_SCROLL_EVENT = 'wemd-sync-scroll';
+
+interface SyncScrollDetail {
+  source: 'editor' | 'preview';
+  ratio: number;
+}
 
 export function MarkdownPreview() {
   const { markdown, theme, customCSS, getThemeCSS } = useEditorStore();
   const [html, setHtml] = useState('');
   const previewRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isSyncingRef = useRef(false);
 
   // 缓存 parser 实例，避免每次渲染都创建新实例
   const parser = useMemo(() => createMarkdownParser(), []);
@@ -40,13 +49,69 @@ export function MarkdownPreview() {
     return () => clearTimeout(timer);
   }, [html]);
 
+  // 处理预览栏滚动事件
+  const handlePreviewScroll = useCallback(() => {
+    if (isSyncingRef.current || !scrollContainerRef.current) return;
+
+    const container = scrollContainerRef.current;
+    const scrollTop = container.scrollTop;
+    const scrollHeight = container.scrollHeight - container.clientHeight;
+
+    if (scrollHeight <= 0) return;
+
+    const ratio = scrollTop / scrollHeight;
+
+    // 发送同步事件给编辑器
+    const event = new CustomEvent<SyncScrollDetail>(SYNC_SCROLL_EVENT, {
+      detail: { source: 'preview', ratio }
+    });
+    window.dispatchEvent(event);
+  }, []);
+
+  // 接收编辑器的同步事件
+  const handleSync = useCallback((event: Event) => {
+    const customEvent = event as CustomEvent<SyncScrollDetail>;
+    const { source, ratio } = customEvent.detail;
+
+    if (source === 'preview' || !scrollContainerRef.current) return;
+
+    const container = scrollContainerRef.current;
+    const scrollHeight = container.scrollHeight - container.clientHeight;
+
+    if (scrollHeight <= 0) return;
+
+    isSyncingRef.current = true;
+    container.scrollTop = scrollHeight * ratio;
+
+    setTimeout(() => {
+      isSyncingRef.current = false;
+    }, 100);
+  }, []);
+
+  // 添加滚动事件监听
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    // 监听预览栏滚动
+    container.addEventListener('scroll', handlePreviewScroll);
+
+    // 监听编辑器的同步事件
+    window.addEventListener(SYNC_SCROLL_EVENT, handleSync as EventListener);
+
+    return () => {
+      container.removeEventListener('scroll', handlePreviewScroll);
+      window.removeEventListener(SYNC_SCROLL_EVENT, handleSync as EventListener);
+    };
+  }, [handlePreviewScroll, handleSync]);
+
   return (
     <div className="markdown-preview">
       <div className="preview-header">
         <span className="preview-title">实时预览</span>
         <span className="preview-subtitle">微信排版效果</span>
       </div>
-      <div className="preview-container">
+      <div className="preview-container" ref={scrollContainerRef}>
         <div className="preview-content">
           <div
             ref={previewRef}
