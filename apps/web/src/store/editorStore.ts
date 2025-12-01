@@ -92,7 +92,9 @@ export const defaultMarkdown = `# 欢迎使用 WeMD
 
 ### Emoji 表情
 今天天气真好 :sunny: 
+
 让我们一起学习 :books: 
+
 加油 :rocket:
 
 ## 3. 列表展示
