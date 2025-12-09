@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { EditorView, minimalSetup } from 'codemirror';
+import { keymap } from '@codemirror/view';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
-import { EditorState } from '@codemirror/state';
+import { EditorState, Prec } from '@codemirror/state';
 import { githubLight } from '@uiw/codemirror-theme-github';
 import { wechatMarkdownHighlighting } from './markdownTheme';
 import { useEditorStore } from '../../store/editorStore';
@@ -17,6 +18,27 @@ interface SyncScrollDetail {
     ratio: number;
 }
 
+// 辅助函数：用 prefix/suffix 包裹选中文本
+function wrapSelection(view: EditorView, prefix: string, suffix: string): boolean {
+    const selection = view.state.selection.main;
+    const selectedText = view.state.doc.sliceString(selection.from, selection.to);
+    const wrapped = prefix + (selectedText || '文本') + suffix;
+
+    view.dispatch({
+        changes: { from: selection.from, to: selection.to, insert: wrapped },
+        selection: selectedText
+            ? { anchor: selection.from, head: selection.from + wrapped.length }
+            : { anchor: selection.from + prefix.length, head: selection.from + prefix.length + 2 }
+    });
+    return true; // 阻止浏览器默认行为
+}
+
+// Markdown 格式化快捷键
+const markdownKeymap = Prec.highest(keymap.of([
+    { key: 'Mod-b', run: (view) => wrapSelection(view, '**', '**') },
+    { key: 'Mod-i', run: (view) => wrapSelection(view, '*', '*') },
+]));
+
 export function MarkdownEditor() {
     const editorRef = useRef<HTMLDivElement>(null);
     const viewRef = useRef<EditorView | null>(null);
@@ -31,6 +53,7 @@ export function MarkdownEditor() {
             doc: initialContent.current,
             extensions: [
                 minimalSetup,
+                markdownKeymap,
                 markdown({ base: markdownLanguage }),
                 wechatMarkdownHighlighting,
                 githubLight,
@@ -71,7 +94,7 @@ export function MarkdownEditor() {
                                     {
                                         loading: '正在上传图片...',
                                         success: (result) => {
-                                            const imageText = `![${result.filename}](${result.url})`;
+                                            const imageText = `![](${result.url})`;
                                             const currentDoc = view.state.doc.toString();
                                             const index = currentDoc.indexOf(loadingText);
 

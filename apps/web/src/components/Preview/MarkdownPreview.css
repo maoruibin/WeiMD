@@ -64,6 +64,14 @@
     /* 允许浏览器合成斜体 */
 }
 
+/* 强制图片自适应，修复浏览器存储模式下图片过大的问题 */
+#wemd img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin: 10px auto;
+}
+
 /* 针对整个预览容器启用字体合成 */
 #wemd {
     font-synthesis: style weight;

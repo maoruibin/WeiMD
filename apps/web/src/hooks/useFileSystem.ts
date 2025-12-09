@@ -251,7 +251,7 @@ export function useFileSystem() {
     }, [workspacePath, refreshFiles, openFile, electron, adapter, storageReady]);
 
     // 6. Save File
-    const saveFile = useCallback(async () => {
+    const saveFile = useCallback(async (showToast = false) => {
         if (!currentFile) return;
         setSaving(true);
 
@@ -268,6 +268,7 @@ themeName: ${themeName}
         // Check if content actually changed
         if (fullContent === lastSavedContent.current) {
             setSaving(false);
+            if (showToast) toast.success('内容无变化');
             return; // Skip save if no change
         }
 
@@ -291,7 +292,7 @@ themeName: ${themeName}
 
         if (success) {
             lastSavedContent.current = fullContent;
-            // toast.success('已保存');
+            if (showToast) toast.success('已保存');
         } else {
             toast.error('保存失败: ' + errorMsg);
         }
@@ -440,6 +441,18 @@ themeName: ${themeName}
 
         return () => clearTimeout(timer);
     }, [markdown, theme, themeName, currentFile, saveFile]);
+
+    // Cmd+S 手动保存快捷键
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+                e.preventDefault();
+                saveFile(true); // showToast = true
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [saveFile]);
 
     return {
         workspacePath,

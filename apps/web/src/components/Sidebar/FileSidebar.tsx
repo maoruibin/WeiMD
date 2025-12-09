@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { useFileSystem } from '../../hooks/useFileSystem';
 import { useEditorStore } from '../../store/editorStore';
-import { Search, Plus, Trash2, FolderOpen, Edit2, MoreHorizontal } from 'lucide-react';
+import { Search, Plus, Trash2, FolderOpen, Edit2, MoreHorizontal, Copy } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import toast from 'react-hot-toast';
 import './FileSidebar.css';
 
 import type { FileItem } from '../../store/fileTypes';
@@ -40,6 +41,17 @@ export function FileSidebar() {
     const startRename = (file: FileItem) => {
         setRenamingPath(file.path);
         setRenameValue(file.name.replace('.md', ''));
+        closeMenu();
+    };
+
+    const copyTitle = async (file: FileItem) => {
+        try {
+            const title = file.name.replace('.md', '');
+            await navigator.clipboard.writeText(title);
+            toast.success('标题已复制');
+        } catch {
+            toast.error('复制失败');
+        }
         closeMenu();
     };
 
@@ -139,6 +151,9 @@ export function FileSidebar() {
                         className="fs-context-menu"
                         style={{ top: menuPos.y, left: menuPos.x }}
                     >
+                        <button onClick={() => copyTitle(menuTarget)}>
+                            <Copy size={14} /> 复制标题
+                        </button>
                         <button onClick={() => startRename(menuTarget)}>
                             <Edit2 size={14} /> 重命名
                         </button>
