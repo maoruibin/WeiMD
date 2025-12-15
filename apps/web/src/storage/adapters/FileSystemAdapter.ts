@@ -67,8 +67,7 @@ export class FileSystemAdapter implements StorageAdapter {
   }
 
   /**
-   * 只获取文件元数据，不读取内容，减少内存占用
-   * themeName 将在打开文件时延迟加载
+   * 获取文件元数据，读取文件头部提取 themeName
    */
   async listFiles(): Promise<FileItem[]> {
     const handle = this.ensureHandle();
@@ -77,12 +76,29 @@ export class FileSystemAdapter implements StorageAdapter {
       if (entry.kind === 'file' && entry.name.endsWith('.md')) {
         const fileHandle = entry as FileSystemFileHandle;
         const file = await fileHandle.getFile();
-        // 不再读取 content，只获取元数据
+
+        // 读取文件开头 500 字节提取 themeName
+        let themeName: string | undefined;
+        try {
+          const slice = file.slice(0, 500);
+          const text = await slice.text();
+          const match = text.match(/^---\n([\s\S]*?)\n---/);
+          if (match) {
+            const themeMatch = match[1].match(/themeName:\s*(.+)/);
+            if (themeMatch) {
+              themeName = themeMatch[1].trim().replace(/^['"]|['"]$/g, '');
+            }
+          }
+        } catch {
+          // ignore
+        }
+
         result.push({
           path: entry.name,
           name: entry.name,
           size: file.size,
           updatedAt: file.lastModified ? new Date(file.lastModified).toISOString() : undefined,
+          meta: themeName ? { themeName } : undefined,
         });
       }
     }
