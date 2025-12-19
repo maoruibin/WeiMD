@@ -21,7 +21,7 @@ export interface ImageUploader {
  * 图床配置
  */
 export interface ImageHostConfig {
-    type: 'official' | 'qiniu' | 'aliyun' | 'tencent';
+    type: 'official' | 'qiniu' | 'aliyun' | 'tencent' | 's3';
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     config?: any;
 }
@@ -60,6 +60,10 @@ export class ImageHostManager {
             case 'tencent': {
                 const { TencentUploader } = await import('./uploaders/TencentUploader');
                 return new TencentUploader(config.config);
+            }
+            case 's3': {
+                const { S3Uploader } = await import('./uploaders/S3Uploader');
+                return new S3Uploader(config.config);
             }
             default: {
                 const { OfficialUploader } = await import('./uploaders/OfficialUploader');

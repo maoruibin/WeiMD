@@ -10,6 +10,7 @@ interface AllConfigs {
         qiniu?: any;
         aliyun?: any;
         tencent?: any;
+        s3?: any;
     };
 }
 
@@ -42,7 +43,7 @@ export function ImageHostSettings() {
         setTestResult(null);
     };
 
-    const handleConfigChange = (key: string, value: string) => {
+    const handleConfigChange = (key: string, value: any) => {
         setAllConfigs(prev => ({
             ...prev,
             configs: {
@@ -117,6 +118,18 @@ export function ImageHostSettings() {
                         <div className="host-option">
                             <strong>腾讯云 COS</strong>
                             <span>腾讯云对象存储，高性能</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <input
+                            type="radio"
+                            checked={currentConfig.type === 's3'}
+                            onChange={() => handleTypeChange('s3')}
+                        />
+                        <div className="host-option">
+                            <strong>S3 兼容图床</strong>
+                            <span>支持 AWS S3, R2, MinIO 等</span>
                         </div>
                     </label>
                 </div>
@@ -307,6 +320,91 @@ export function ImageHostSettings() {
                             <small>
                                 <a href="https://console.cloud.tencent.com/cos" target="_blank">腾讯云 COS 控制台</a>
                             </small>
+                            <button onClick={testConnection}>测试连接</button>
+                            {testResult && <div className="test-result">{testResult}</div>}
+                        </div>
+                    )}
+
+                    {currentConfig.type === 's3' && (
+                        <div className="host-config">
+                            <div className="config-field">
+                                <label>Endpoint（可选）</label>
+                                <input
+                                    type="text"
+                                    placeholder="https://s3.us-east-1.amazonaws.com"
+                                    value={currentConfig.config?.endpoint || ''}
+                                    onChange={(e) => handleConfigChange('endpoint', e.target.value)}
+                                />
+                                <small>自定义 Endpoint，如 Cloudflare R2, MinIO 等。AWS S3 可留空。</small>
+                            </div>
+                            <div className="config-field">
+                                <label>Region</label>
+                                <input
+                                    type="text"
+                                    placeholder="us-east-1"
+                                    value={currentConfig.config?.region || ''}
+                                    onChange={(e) => handleConfigChange('region', e.target.value)}
+                                />
+                                <small>存储区域，例如 us-east-1, auto (R2)</small>
+                            </div>
+                            <div className="config-field">
+                                <label>AccessKey ID</label>
+                                <input
+                                    type="text"
+                                    placeholder="AKIA..."
+                                    value={currentConfig.config?.accessKeyId || ''}
+                                    onChange={(e) => handleConfigChange('accessKeyId', e.target.value)}
+                                />
+                            </div>
+                            <div className="config-field">
+                                <label>Secret Access Key</label>
+                                <input
+                                    type="password"
+                                    placeholder="Your secret key"
+                                    value={currentConfig.config?.secretAccessKey || ''}
+                                    onChange={(e) => handleConfigChange('secretAccessKey', e.target.value)}
+                                />
+                            </div>
+                            <div className="config-field">
+                                <label>Bucket</label>
+                                <input
+                                    type="text"
+                                    placeholder="my-bucket"
+                                    value={currentConfig.config?.bucket || ''}
+                                    onChange={(e) => handleConfigChange('bucket', e.target.value)}
+                                />
+                            </div>
+                            <div className="config-field">
+                                <label>路径前缀（可选）</label>
+                                <input
+                                    type="text"
+                                    placeholder="uploads"
+                                    value={currentConfig.config?.path || ''}
+                                    onChange={(e) => handleConfigChange('path', e.target.value)}
+                                />
+                            </div>
+                            <div className="config-field">
+                                <label>自定义访问域名（可选）</label>
+                                <input
+                                    type="text"
+                                    placeholder="https://img.example.com"
+                                    value={currentConfig.config?.publicUrl || ''}
+                                    onChange={(e) => handleConfigChange('publicUrl', e.target.value)}
+                                />
+                                <small>用于访问图片的自定义域名，配置了 CDN 时使用</small>
+                            </div>
+                            <div className="config-field">
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={currentConfig.config?.forcePathStyle || false}
+                                        onChange={(e) => handleConfigChange('forcePathStyle', e.target.checked)}
+                                        style={{ width: 'auto' }}
+                                    />
+                                    强制 Path Style
+                                </label>
+                                <small>MinIO 等部分兼容服务可能需要开启此选项</small>
+                            </div>
                             <button onClick={testConnection}>测试连接</button>
                             {testResult && <div className="test-result">{testResult}</div>}
                         </div>
