@@ -51,7 +51,7 @@ export class S3Uploader implements ImageUploader {
     async validate(): Promise<boolean> {
         try {
             if (!this.config.accessKeyId || !this.config.secretAccessKey || !this.config.bucket || !this.config.region) {
-                return false;
+                throw new Error('请填写完整的配置信息（AccessKey, SecretKey, Bucket, Region）');
             }
 
             const client = this.getClient();
@@ -71,12 +71,10 @@ export class S3Uploader implements ImageUploader {
         } catch (e: any) {
             console.error('S3 validate failed:', e);
             if (e.name === 'TypeError' && e.message === 'Failed to fetch') {
-                console.warn('CORS Error detected. Please check your S3 CORS configuration.');
-                // 虽然验证失败，但我们不想让 UI 直接显示“配置无效”，而是希望能传递出 CORS 的信息
-                // 但 validate 返回 boolean，这里只能打印日志。
-                // 或者我们可以抛出错误，但上层调用可能只捕获 true/false
+                throw new Error(`跨域错误 (CORS)。请在 S3 控制台配置 Allowed Origins 为 ${window.location.origin}`);
             }
-            return false;
+            // 抛出具体错误信息，让 UI 显示
+            throw new Error(`验证失败: ${e.message || e}`);
         }
     }
 

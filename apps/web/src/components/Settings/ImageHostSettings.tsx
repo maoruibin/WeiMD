@@ -327,6 +327,10 @@ export function ImageHostSettings() {
 
                     {currentConfig.type === 's3' && (
                         <div className="host-config">
+                            <div className="config-alert">
+                                <strong>⚠️ CORS 配置提醒</strong>
+                                请务必在云服务商控制台配置跨域 (CORS) 规则，允许来源 (Allowed Origins) 为 <code>{window.location.origin}</code>，并允许 PUT 方法。
+                            </div>
                             <div className="config-field">
                                 <label>Endpoint（可选）</label>
                                 <input
