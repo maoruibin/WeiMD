@@ -3,11 +3,12 @@ import {
     Bold, Italic, Strikethrough,
     Heading1, Heading2, Heading3,
     List, ListOrdered, Quote, Code,
-    Link, Image, Minus, Loader2
+    Link, Image, Minus, Loader2, PanelBottom
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ImageHostManager } from '../../services/image/ImageUploader';
 import type { ImageHostConfig } from '../../services/image/ImageUploader';
+import { FooterTemplateModal } from '../FooterTemplate/FooterTemplateModal';
 import './Toolbar.css';
 
 interface ToolbarProps {
@@ -17,6 +18,7 @@ interface ToolbarProps {
 export function Toolbar({ onInsert }: ToolbarProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
+    const [showFooterModal, setShowFooterModal] = useState(false);
 
     const tools = [
         { icon: Bold, label: "粗体", prefix: "**", suffix: "**", placeholder: "粗体文字" },
@@ -104,6 +106,18 @@ export function Toolbar({ onInsert }: ToolbarProps) {
                 {uploading ? <Loader2 size={16} className="spinning" /> : <Image size={16} />}
             </button>
 
+            {/* 分割线 */}
+            <div style={{ width: '1px', height: '24px', background: 'var(--border-light)', margin: '0 4px' }}></div>
+
+            {/* 尾部模板按钮 */}
+            <button
+                className="md-toolbar-btn"
+                onClick={() => setShowFooterModal(true)}
+                data-tooltip="插入尾部模板"
+            >
+                <PanelBottom size={16} />
+            </button>
+
             {/* 隐藏的文件输入 */}
             <input
                 ref={fileInputRef}
@@ -112,6 +126,13 @@ export function Toolbar({ onInsert }: ToolbarProps) {
                 onChange={handleFileChange}
                 style={{ display: 'none' }}
             />
+
+            {showFooterModal && (
+                <FooterTemplateModal 
+                    onClose={() => setShowFooterModal(false)}
+                    onInsert={(html) => onInsert(html, '', '')} 
+                />
+            )}
         </div>
     );
 }

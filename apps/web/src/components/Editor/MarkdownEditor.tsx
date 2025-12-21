@@ -14,10 +14,15 @@ import toast from 'react-hot-toast';
 import './MarkdownEditor.css';
 
 const SYNC_SCROLL_EVENT = 'wemd-sync-scroll';
+const INSERT_TEXT_EVENT = 'wemd-insert-text';
 
 interface SyncScrollDetail {
     source: 'editor' | 'preview';
     ratio: number;
+}
+
+interface InsertTextDetail {
+    text: string;
 }
 
 // 辅助函数：用 prefix/suffix 包裹选中文本
@@ -212,14 +217,35 @@ export function MarkdownEditor() {
             scrollDOM.scrollTo({ top: detail.ratio * max });
         };
 
+        const handleInsertText = (event: Event) => {
+            const customEvent = event as CustomEvent<InsertTextDetail>;
+            const { text } = customEvent.detail;
+            if (!text) return;
+
+            const selection = view.state.selection.main;
+            view.dispatch({
+                changes: {
+                    from: selection.from,
+                    to: selection.to,
+                    insert: text
+                },
+                selection: {
+                    anchor: selection.from + text.length
+                }
+            });
+            view.focus();
+        };
+
         scrollDOM.addEventListener('scroll', handleEditorScroll);
         window.addEventListener(SYNC_SCROLL_EVENT, handleSync as EventListener);
+        window.addEventListener(INSERT_TEXT_EVENT, handleInsertText as EventListener);
 
         viewRef.current = view;
 
         return () => {
             scrollDOM.removeEventListener('scroll', handleEditorScroll);
             window.removeEventListener(SYNC_SCROLL_EVENT, handleSync as EventListener);
+            window.removeEventListener(INSERT_TEXT_EVENT, handleInsertText as EventListener);
             view.destroy();
         };
         // 加入 uiTheme 依赖，主题切换时重建编辑器
