@@ -50,6 +50,40 @@ export const createMarkdownParser = () => {
         },
     });
 
+    // Patch: 修复中文环境下加粗语法在全角符号旁失效的问题
+    // 只要紧邻的是 CJK 字符或全角标点，就强制允许强调
+    // @ts-ignore
+    const originalScanDelims = markdownParser.inline.State.prototype.scanDelims;
+    // @ts-ignore
+    markdownParser.inline.State.prototype.scanDelims = function(start, canSplitWord) {
+        const res = originalScanDelims.call(this, start, canSplitWord);
+        
+        // 仅处理 * 号 (加粗/斜体)
+        if (this.src.charCodeAt(start) === 0x2A) {
+            const count = res.length;
+            // 检查左侧字符 (前一个字符)
+            const prevChar = start > 0 ? this.src.charCodeAt(start - 1) : 0x20;
+            const prevCharStr = String.fromCharCode(prevChar);
+            // 检查右侧字符 (delimiter 后的第一个字符)
+            const nextChar = start + count < this.src.length ? this.src.charCodeAt(start + count) : 0x20;
+            const nextCharStr = String.fromCharCode(nextChar);
+
+            // CJK 字符或全角标点正则 (包含常见中文标点范围)
+            const isCJK = (char: string) => /[\u4e00-\u9fa5\u3000-\u303f\uff00-\uffef\u2000-\u206f]/.test(char);
+
+            // 修正 can_open: 如果后面是 CJK 相关字符且不是空白，强制允许 open
+            if (!res.can_open && isCJK(nextCharStr) && !markdownParser.utils.isWhiteSpace(nextChar)) {
+                res.can_open = true;
+            }
+
+            // 修正 can_close: 如果前面是 CJK 相关字符且不是空白，强制允许 close
+            if (!res.can_close && isCJK(prevCharStr) && !markdownParser.utils.isWhiteSpace(prevChar)) {
+                res.can_close = true;
+            }
+        }
+        return res;
+    };
+
     const calloutConfigs = [
         { type: "tip", label: "技巧", icon: "💡" },
         { type: "note", label: "提示", icon: "📝" },
