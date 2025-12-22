@@ -26,6 +26,8 @@ export interface ImageHostConfig {
     config?: any;
 }
 
+import { OfficialUploader } from './uploaders/OfficialUploader';
+
 /**
  * 图床管理器
  * 使用动态导入实现按需加载，减少首屏加载体积
@@ -46,7 +48,6 @@ export class ImageHostManager {
     private async createUploader(config: ImageHostConfig): Promise<ImageUploader> {
         switch (config.type) {
             case 'official': {
-                const { OfficialUploader } = await import('./uploaders/OfficialUploader');
                 return new OfficialUploader(config.config);
             }
             case 'qiniu': {
@@ -66,7 +67,6 @@ export class ImageHostManager {
                 return new S3Uploader(config.config);
             }
             default: {
-                const { OfficialUploader } = await import('./uploaders/OfficialUploader');
                 return new OfficialUploader(config.config);
             }
         }

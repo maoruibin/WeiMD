@@ -14,10 +14,8 @@
 </p>
 
 <p align="center">
-  <a href="https://wemd.app">🌐 官网</a> •
-  <a href="https://edit.wemd.app">✏️ 在线使用</a> •
-  <a href="https://wemd.app/docs">📖 文档</a> •
-  <a href="https://github.com/tenngoxars/WeMD/releases">📦 下载桌面版</a>
+  <a href="https://https://weimd.gudong.site/">🌐 官网</a> •
+  
 </p>
 
 <p align="center">
@@ -66,7 +64,7 @@ WeMD 内置了一套**色彩语义保全算法**，可在编辑器中预览微�
 
 ### 在线使用
 
-直接访问 **[edit.wemd.app](https://edit.wemd.app)** 即可开始写作，无需安装。
+直接访问 **[weimd.gudong.site](https://weimd.gudong.site/)** 即可开始写作，无需安装。
 
 ### 桌面版下载
 

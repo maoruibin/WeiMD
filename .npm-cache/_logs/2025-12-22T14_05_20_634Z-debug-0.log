@@ -1,0 +1,71 @@
+0 verbose cli /usr/local/bin/node /usr/local/bin/npm
+1 info using npm@10.2.4
+2 info using node@v20.11.0
+3 timing npm:load:whichnode Completed in 1ms
+4 timing config:load:defaults Completed in 1ms
+5 timing config:load:file:/usr/local/lib/node_modules/npm/npmrc Completed in 0ms
+6 timing config:load:builtin Completed in 0ms
+7 timing config:load:cli Completed in 1ms
+8 timing config:load:env Completed in 0ms
+9 timing config:load:file:/Users/gudong/code/person/WeMD/node_modules/.pnpm/workerd@1.20251217.0/node_modules/workerd/lib/npm-install/.npmrc Completed in 0ms
+10 timing config:load:project Completed in 2ms
+11 timing config:load:file:/Users/gudong/.npmrc Completed in 1ms
+12 timing config:load:user Completed in 1ms
+13 timing config:load:file:/usr/local/etc/npmrc Completed in 0ms
+14 timing config:load:global Completed in 0ms
+15 timing config:load:setEnvs Completed in 0ms
+16 timing config:load Completed in 5ms
+17 timing npm:load:configload Completed in 5ms
+18 timing config:load:flatten Completed in 1ms
+19 timing npm:load:mkdirpcache Completed in 0ms
+20 timing npm:load:mkdirplogs Completed in 0ms
+21 verbose title npm install @cloudflare/workerd-darwin-arm64@1.20251217.0
+22 verbose argv "install" "--loglevel" "error" "--prefer-offline" "--no-audit" "--progress" "false" "@cloudflare/workerd-darwin-arm64@1.20251217.0"
+23 timing npm:load:setTitle Completed in 5ms
+24 timing npm:load:display Completed in 1ms
+25 verbose logfile logs-max:10 dir:/Users/gudong/code/person/WeMD/.npm-cache/_logs/2025-12-22T14_05_20_634Z-
+26 verbose logfile /Users/gudong/code/person/WeMD/.npm-cache/_logs/2025-12-22T14_05_20_634Z-debug-0.log
+27 timing npm:load:logFile Completed in 4ms
+28 timing npm:load:timers Completed in 0ms
+29 timing npm:load:configScope Completed in 0ms
+30 timing npm:load Completed in 22ms
+31 timing arborist:ctor Completed in 1ms
+32 silly logfile done cleaning log files
+33 timing arborist:ctor Completed in 0ms
+34 timing idealTree:init Completed in 5ms
+35 timing idealTree:userRequests Completed in 1ms
+36 silly idealTree buildDeps
+37 silly fetch manifest @cloudflare/workerd-darwin-arm64@1.20251217.0
+38 http fetch GET 200 https://registry.npmmirror.com/@cloudflare%2fworkerd-darwin-arm64 523ms (cache miss)
+39 silly placeDep ROOT @cloudflare/workerd-darwin-arm64@ OK for:  want: 1.20251217.0
+40 timing idealTree:#root Completed in 529ms
+41 timing idealTree:node_modules/@cloudflare/workerd-darwin-arm64 Completed in 0ms
+42 timing idealTree:buildDeps Completed in 529ms
+43 timing idealTree:fixDepFlags Completed in 0ms
+44 timing idealTree Completed in 536ms
+45 timing command:install Completed in 574ms
+46 verbose type version
+47 verbose stack @cloudflare/workerd-darwin-arm64: No matching version found for @cloudflare/workerd-darwin-arm64@1.20251217.0.
+47 verbose stack     at module.exports (/usr/local/lib/node_modules/npm/node_modules/npm-pick-manifest/lib/index.js:209:23)
+47 verbose stack     at RegistryFetcher.manifest (/usr/local/lib/node_modules/npm/node_modules/pacote/lib/registry.js:119:22)
+47 verbose stack     at async #nodeFromEdge (/usr/local/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/build-ideal-tree.js:1049:19)
+47 verbose stack     at async #buildDepStep (/usr/local/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/build-ideal-tree.js:917:11)
+47 verbose stack     at async Arborist.buildIdealTree (/usr/local/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/build-ideal-tree.js:196:7)
+47 verbose stack     at async Promise.all (index 1)
+47 verbose stack     at async Arborist.reify (/usr/local/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:159:5)
+47 verbose stack     at async Install.exec (/usr/local/lib/node_modules/npm/lib/commands/install.js:152:5)
+47 verbose stack     at async module.exports (/usr/local/lib/node_modules/npm/lib/cli-entry.js:61:5)
+48 verbose cwd /Users/gudong/code/person/WeMD/node_modules/.pnpm/workerd@1.20251217.0/node_modules/workerd/lib/npm-install
+49 verbose Darwin 24.6.0
+50 verbose node v20.11.0
+51 verbose npm  v10.2.4
+52 error code ETARGET
+53 error notarget No matching version found for @cloudflare/workerd-darwin-arm64@1.20251217.0.
+54 error notarget In most cases you or one of your dependencies are requesting
+54 error notarget a package version that doesn't exist.
+55 verbose exit 1
+56 timing npm Completed in 701ms
+57 verbose unfinished npm timer reify 1766412320761
+58 verbose unfinished npm timer reify:loadTrees 1766412320798
+59 verbose code 1
+60 error A complete log of this run can be found in: /Users/gudong/code/person/WeMD/.npm-cache/_logs/2025-12-22T14_05_20_634Z-debug-0.log

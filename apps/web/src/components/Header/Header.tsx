@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { useEditorStore } from '../../store/editorStore';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { ThemePanel } from '../Theme/ThemePanel';
 import { StorageModeSelector } from '../StorageModeSelector/StorageModeSelector';
 import { ImageHostSettings } from '../Settings/ImageHostSettings';
 import './Header.css';
-import { Layers, Palette, Send, ImageIcon, Sun, Moon, PanelLeft, MoreHorizontal, Database, Menu } from 'lucide-react';
+import { Palette, ImageIcon, Sun, Moon, MoreHorizontal, Database, Menu, HelpCircle, X, Info } from 'lucide-react';
 import { useUITheme } from '../../hooks/useUITheme';
 import { useUIStore } from '../../store/uiStore';
 import { ExportButton } from './ExportButton';
@@ -24,13 +24,16 @@ const StructuralismLogoMark = () => (
 );
 
 export function Header() {
-    const { copyToWechat } = useEditorStore();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const isEditorPage = location.pathname === '/';
+
     const [showThemePanel, setShowThemePanel] = useState(false);
     const [showStorageModal, setShowStorageModal] = useState(false);
     const [showImageHostModal, setShowImageHostModal] = useState(false);
     const uiTheme = useUITheme((state) => state.theme);
     const setTheme = useUITheme((state) => state.setTheme);
-    const { isSidebarOpen, toggleSidebar } = useUIStore();
+    const { toggleSidebar } = useUIStore();
     const isStructuralismUI = uiTheme === 'dark';
 
     const isElectron = typeof window !== 'undefined' && !!(window as unknown as { electron?: unknown }).electron;
@@ -55,21 +58,23 @@ export function Header() {
             <div className="header-layout-wrapper">
                 <header className="app-header">
                     <div className="header-left">
-                        <button
-                            className="btn-ghost"
-                            onClick={toggleSidebar}
-                            aria-label="展开侧边栏"
-                            title="展开侧边栏"
-                        >
-                            <Menu size={20} strokeWidth={2} />
-                        </button>
-                        <div className="logo">
+                        {isEditorPage && (
+                            <button
+                                className="btn-ghost"
+                                onClick={toggleSidebar}
+                                aria-label="展开侧边栏"
+                                title="展开侧边栏"
+                            >
+                                <Menu size={20} strokeWidth={2} />
+                            </button>
+                        )}
+                        <Link to="/" className="logo" style={{ textDecoration: 'none' }}>
                             {isStructuralismUI ? <StructuralismLogoMark /> : <DefaultLogoMark />}
                             <div className="logo-info">
                                 <span className="logo-text">WeiMD</span>
                                 <span className="logo-subtitle">公众号 Markdown 排版编辑器</span>
                             </div>
-                        </div>
+                        </Link>
                     </div>
 
                     <div className="header-right">
@@ -82,46 +87,66 @@ export function Header() {
                             {uiTheme === 'dark' ? <Sun size={18} strokeWidth={2} /> : <Moon size={18} strokeWidth={2} />}
                         </button>
 
-                        <div className="header-menu-container" ref={moreMenuRef}>
+                        {!isEditorPage ? (
                             <button 
                                 className="btn-icon-only"
-                                onClick={() => setShowMoreMenu(!showMoreMenu)}
-                                aria-label="更多设置"
-                                title="更多设置"
+                                onClick={() => navigate('/')}
+                                aria-label="关闭文档"
+                                title="关闭文档"
                             >
-                                <MoreHorizontal size={20} strokeWidth={2} />
+                                <X size={20} strokeWidth={2} />
                             </button>
-                            
-                            {showMoreMenu && (
-                                <div className="header-menu">
-                                    <button className="header-menu-item" onClick={() => {
-                                        setShowImageHostModal(true);
-                                        setShowMoreMenu(false);
-                                    }}>
-                                        <ImageIcon />
-                                        <span>图床设置</span>
-                                    </button>
-                                    <button className="header-menu-item" onClick={() => {
-                                        setShowThemePanel(true);
-                                        setShowMoreMenu(false);
-                                    }}>
-                                        <Palette />
-                                        <span>主题管理</span>
-                                    </button>
-                                    {!isElectron && (
+                        ) : (
+                            <div className="header-menu-container" ref={moreMenuRef}>
+                                <button 
+                                    className="btn-icon-only"
+                                    onClick={() => setShowMoreMenu(!showMoreMenu)}
+                                    aria-label="更多设置"
+                                    title="更多设置"
+                                >
+                                    <MoreHorizontal size={20} strokeWidth={2} />
+                                </button>
+                                
+                                {showMoreMenu && (
+                                    <div className="header-menu">
                                         <button className="header-menu-item" onClick={() => {
-                                            setShowStorageModal(true);
+                                            setShowImageHostModal(true);
                                             setShowMoreMenu(false);
                                         }}>
-                                            <Database />
-                                            <span>存储模式</span>
+                                            <ImageIcon />
+                                            <span>图床设置</span>
                                         </button>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+                                        <button className="header-menu-item" onClick={() => {
+                                            setShowThemePanel(true);
+                                            setShowMoreMenu(false);
+                                        }}>
+                                            <Palette />
+                                            <span>主题管理</span>
+                                        </button>
+                                        {!isElectron && (
+                                            <button className="header-menu-item" onClick={() => {
+                                                setShowStorageModal(true);
+                                                setShowMoreMenu(false);
+                                            }}>
+                                                <Database />
+                                                <span>存储模式</span>
+                                            </button>
+                                        )}
+                                        <div style={{ height: '1px', background: 'var(--border-color)', margin: '4px 0' }}></div>
+                                        <a href="/docs/" target="_blank" rel="noopener noreferrer" className="header-menu-item" onClick={() => setShowMoreMenu(false)}>
+                                            <HelpCircle />
+                                            <span>帮助中心</span>
+                                        </a>
+                                        <a href="/docs/about/intro.html" target="_blank" rel="noopener noreferrer" className="header-menu-item" onClick={() => setShowMoreMenu(false)}>
+                                            <Info />
+                                            <span>关于我们</span>
+                                        </a>
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
-                        <ExportButton />
+                        {isEditorPage && <ExportButton />}
                     </div>
                 </header>
             </div>

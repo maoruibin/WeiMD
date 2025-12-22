@@ -6,6 +6,15 @@ export default defineConfig({
   // Electron 和大多数静态部署都建议使用相对路径
   base: './',
   plugins: [react()],
+  server: {
+    proxy: {
+      '/docs': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  },
   build: {
     rollupOptions: {
       output: {

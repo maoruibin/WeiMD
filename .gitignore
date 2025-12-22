@@ -10,7 +10,12 @@ apps/macos/
 # Electron
 apps/electron/node_modules/
 apps/electron/dist/
+apps/worker/.npm-cache
 
 # AI Agent files
 .agentdocs/
 .gemini/
+
+# VuePress
+apps/docs/src/.vuepress/.cache/
+apps/docs/src/.vuepress/.temp/
