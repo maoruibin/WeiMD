@@ -43,7 +43,7 @@ export const showcaseUsers: ShowcaseUser[] = [
     desc: "教会普通人使用AI，分享AI书签、技巧和教程。收集国内外A网站和资源。",
     avatar: "https://gudong.s3.bitiful.net/weimd/1766458041800_image.png",
     qrcode: "https://gudong.s3.bitiful.net/weimd/1766458056167_image.png",
-    tags: ["技术", "生活"]
+    tags: ["技术", "AI"]
   },
   {
     name: "张大名",
