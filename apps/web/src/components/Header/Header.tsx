@@ -100,6 +100,17 @@ export function Header() {
                             </button>
                         )}
 
+                        {isEditorPage && (
+                            <button
+                                className="btn-icon-only"
+                                onClick={() => setShowThemePanel(true)}
+                                aria-label="主题管理"
+                                title="主题管理"
+                            >
+                                <Palette size={20} strokeWidth={2} />
+                            </button>
+                        )}
+
                         {!isEditorPage && !isShowcasePage ? (
                             <button 
                                 className="btn-icon-only"
@@ -130,13 +141,6 @@ export function Header() {
                                                 }}>
                                                     <ImageIcon />
                                                     <span>图床设置</span>
-                                                </button>
-                                                <button className="header-menu-item" onClick={() => {
-                                                    setShowThemePanel(true);
-                                                    setShowMoreMenu(false);
-                                                }}>
-                                                    <Palette />
-                                                    <span>主题管理</span>
                                                 </button>
                                                 {!isElectron && (
                                                     <button className="header-menu-item" onClick={() => {

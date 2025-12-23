@@ -50,7 +50,7 @@ export function ShowcasePage() {
               <h2>申请收录</h2>
               <p>如果你也是 WeiMD 的用户，欢迎加入我们！</p>
               <a 
-                href="https://gudong.feishu.cn/share/base/form/shrcnZ8Q8X5X5X5X5X5X5X5X5X" 
+                href="https://ai.feishu.cn/share/base/form/shrcnLTgtUaA59NU9hAeMBLLpQd" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="btn-primary join-btn"

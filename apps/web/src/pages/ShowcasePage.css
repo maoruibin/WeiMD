@@ -143,10 +143,10 @@
 }
 
 .qrcode-box img {
-  width: 140px;
-  height: 140px;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  width: 100px;
+  height: 100px;
+  border-radius: 4px;
+  margin-bottom: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   background: white; /* 确保有白底，防止二维码透明部分与背景混淆 */
   padding: 4px;      /* 增加一点内边距，像拍立得一样 */
