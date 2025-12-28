@@ -137,3 +137,39 @@ export const createMarkdownParser = () => {
 
     return markdownParser;
 };
+
+/**
+ * 智能分段处理函数
+ * 解决用户不习惯按两次回车分段的问题
+ */
+export const preprocessMarkdown = (markdown: string): string => {
+    // 1. 保护代码块：先将代码块抽离，防止代码里的换行被破坏
+    const codeBlockRegex = /(```[\s\S]*?```|`[\s\S]*?`)/g;
+    const placeholders: string[] = [];
+
+    let temp = markdown.replace(codeBlockRegex, (match) => {
+        placeholders.push(match);
+        return `__CODE_BLOCK_${placeholders.length - 1}__`;
+    });
+
+    // 2. 核心逻辑：标准化换行符并处理智能分段
+    // 先统一将所有换行符转换为 \n，避免 \r\n 造成的正则匹配问题
+    temp = temp.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    // 匹配所有连续的换行符
+    temp = temp.replace(/\n+/g, (match) => {
+        // 如果只有一个换行符，替换为两个（即一个空行），从而产生段落
+        if (match.length === 1) {
+            return '\n\n';
+        }
+        // 如果已经是多个换行符，保持原样
+        return match;
+    });
+
+    // 3. 还原代码块
+    temp = temp.replace(/__CODE_BLOCK_(\d+)__/g, (_, index) => {
+        return placeholders[Number(index)];
+    });
+
+    return temp;
+};

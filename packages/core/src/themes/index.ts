@@ -1,4 +1,6 @@
 export * from './basic';
+export * from './geek-orange';
+export * from './lark-blue';
 export * from './normal';
 export * from './code-github';
 export * from './custom-default';

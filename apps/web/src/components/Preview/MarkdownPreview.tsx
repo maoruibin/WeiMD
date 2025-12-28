@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
-import { createMarkdownParser, processHtml } from '@wemd/core';
+import { createMarkdownParser, processHtml, preprocessMarkdown } from '@wemd/core';
 import { useEditorStore } from '../../store/editorStore';
 import { useThemeStore } from '../../store/themeStore';
+import { useUIStore } from '../../store/uiStore';
 import { useUITheme } from '../../hooks/useUITheme';
 import { hasMathFormula, renderMathInElement } from '../../utils/katexRenderer';
 import './MarkdownPreview.css';
@@ -17,6 +18,7 @@ export function MarkdownPreview() {
   const { markdown } = useEditorStore();
   const { themeId: theme, customCSS, getThemeCSS } = useThemeStore();
   const uiTheme = useUITheme((state) => state.theme);
+  const isAutoParagraph = useUIStore((state) => state.isAutoParagraph);
   const [html, setHtml] = useState('');
   const previewRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -26,7 +28,8 @@ export function MarkdownPreview() {
   const parser = useMemo(() => createMarkdownParser(), []);
 
   useEffect(() => {
-    const rawHtml = parser.render(markdown);
+    const processedMarkdown = isAutoParagraph ? preprocessMarkdown(markdown) : markdown;
+    const rawHtml = parser.render(processedMarkdown);
 
     // 使用 store 中的 getThemeCSS 方法，根据 UI 主题决定是否追加深色模式覆盖
     const isDarkMode = uiTheme === 'dark';
@@ -35,7 +38,7 @@ export function MarkdownPreview() {
     const styledHtml = processHtml(rawHtml, css, false);
 
     setHtml(styledHtml);
-  }, [markdown, theme, customCSS, getThemeCSS, parser, uiTheme]);
+  }, [markdown, theme, customCSS, getThemeCSS, parser, uiTheme, isAutoParagraph]);
 
   // KaTeX 渲染：轻量级、快速，解决内存问题
   // MathJax 仅在复制到微信时使用

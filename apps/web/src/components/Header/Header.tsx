@@ -4,7 +4,7 @@ import { ThemePanel } from '../Theme/ThemePanel';
 import { StorageModeSelector } from '../StorageModeSelector/StorageModeSelector';
 import { ImageHostSettings } from '../Settings/ImageHostSettings';
 import './Header.css';
-import { Palette, ImageIcon, Sun, Moon, MoreHorizontal, Database, Menu, HelpCircle, X, Info, Users, ArrowLeft } from 'lucide-react';
+import { Palette, ImageIcon, Sun, Moon, MoreHorizontal, Database, Menu, HelpCircle, X, Info, Users, ArrowLeft, Pilcrow } from 'lucide-react';
 import { useUITheme } from '../../hooks/useUITheme';
 import { useUIStore } from '../../store/uiStore';
 import { ExportButton } from './ExportButton';
@@ -34,7 +34,7 @@ export function Header() {
     const [showImageHostModal, setShowImageHostModal] = useState(false);
     const uiTheme = useUITheme((state) => state.theme);
     const setTheme = useUITheme((state) => state.setTheme);
-    const { toggleSidebar } = useUIStore();
+    const { toggleSidebar, isAutoParagraph, setAutoParagraph } = useUIStore();
     const isStructuralismUI = uiTheme === 'dark';
 
     const isElectron = typeof window !== 'undefined' && !!(window as unknown as { electron?: unknown }).electron;
@@ -151,7 +151,6 @@ export function Header() {
                                                         <span>存储模式</span>
                                                     </button>
                                                 )}
-                                                <div style={{ height: '1px', background: 'var(--border-color)', margin: '4px 0' }}></div>
                                                 <Link to="/showcase" className="header-menu-item" onClick={() => setShowMoreMenu(false)}>
                                                     <Users />
                                                     <span>创作者案例</span>

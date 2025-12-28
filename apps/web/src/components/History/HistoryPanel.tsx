@@ -310,6 +310,10 @@ function IndexedHistoryPanel() {
                   key={entry.id}
                   className={`history-item ${activeId === entry.id ? 'active' : ''}`}
                   onClick={() => handleRestore(entry)}
+                  onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    startRename(entry);
+                  }}
                 >
                   <div className="history-item-main">
                     <div className="history-title-block">
@@ -325,7 +329,12 @@ function IndexedHistoryPanel() {
                           <button onClick={() => setRenamingId(null)}>取消</button>
                         </div>
                       ) : (
-                        <span className="history-title">{entry.title || '未命名文章'}</span>
+                        <span 
+                          className="history-title" 
+                          title="双击重命名"
+                        >
+                          {entry.title || '未命名文章'}
+                        </span>
                       )}
                       <span className="history-theme">{entry.themeName || '未命名主题'}</span>
                     </div>

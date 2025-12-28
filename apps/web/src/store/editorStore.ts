@@ -4,7 +4,9 @@
  * 主题相关功能已迁移到 themeStore.ts
  */
 import { create } from 'zustand';
+import { preprocessMarkdown } from '@wemd/core';
 import { useThemeStore } from './themeStore';
+// import { useUIStore } from './uiStore'; // 移除静态导入以解决循环依赖/初始化问题
 import { copyToWechat as execCopyToWechat } from '../services/wechatCopyService';
 
 export interface ResetOptions {
@@ -182,10 +184,18 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   copyToWechat: async () => {
     const { markdown } = get();
     const themeStore = useThemeStore.getState();
+    // 动态导入以解决循环依赖
+    const { useUIStore } = await import('./uiStore');
+    const uiStore = useUIStore.getState();
     const css = themeStore.getThemeCSS(themeStore.themeId);
 
+    // 如果开启了自动分段，预处理 Markdown
+    const contentToCopy = uiStore.isAutoParagraph 
+      ? preprocessMarkdown(markdown) 
+      : markdown;
+
     try {
-      await execCopyToWechat(markdown, css);
+      await execCopyToWechat(contentToCopy, css);
     } catch (error) {
       console.error('复制失败:', error);
     }
