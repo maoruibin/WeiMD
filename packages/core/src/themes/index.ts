@@ -15,3 +15,4 @@ export * from './neo-brutalism';
 export * from './receipt';
 export * from './sunset-film';
 export * from './template';
+export * from './vue-green';

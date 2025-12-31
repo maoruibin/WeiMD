@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './FooterTemplateModal.css';
 
 interface FooterConfig {
@@ -32,21 +33,40 @@ export function FooterTemplateModal({ onClose, onInsert }: FooterTemplateModalPr
         }
     }, []);
 
-    const escapeHtml = (unsafe: string) => {
-        return unsafe
+    const processText = (text: string) => {
+        // 1. Escape HTML first to prevent XSS
+        let processed = text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+        // 2. Process Markdown links [text](url)
+        processed = processed.replace(
+            /\[(.*?)\]\((.*?)\)/g, 
+            '<a href="$2" style="color: inherit; text-decoration: none; border-bottom: 1px dashed currentColor;">$1</a>'
+        );
+
+        // 3. Handle newlines
+        return processed.replace(/\n/g, "<br/>");
+    };
+
+    const generateHtml = (preview: boolean = false) => {
+        const { title, tags, content } = config;
+        
+        // Title doesn't support markdown links, just escape
+        const safeTitle = title
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;")
             .replace(/\n/g, "<br/>");
-    };
 
-    const generateHtml = (preview: boolean = false) => {
-        const { title, tags, content } = config;
-        const safeTitle = escapeHtml(title);
-        const safeTags = escapeHtml(tags);
-        const safeContent = escapeHtml(content);
+        // Tags and Content support markdown links
+        const safeTags = processText(tags);
+        const safeContent = processText(content);
 
         // 样式变量
         const primaryColor = "#333";
@@ -55,35 +75,14 @@ export function FooterTemplateModal({ onClose, onInsert }: FooterTemplateModalPr
 
         switch (config.templateId) {
             case 'card':
-                return `
-<section style="margin: 40px 0 20px; padding: 24px; background: #f9f9f9; border-radius: 12px; border: 1px solid #eee;">
-    <div style="font-weight: bold; font-size: 18px; margin-bottom: 8px; color: ${primaryColor};">${safeTitle}</div>
-    <div style="font-size: 13px; color: ${secondaryColor}; margin-bottom: 16px; letter-spacing: 0.5px;">${safeTags}</div>
-    <div style="font-size: 15px; color: ${primaryColor}; line-height: 1.8;">${safeContent}</div>
-</section>
-<p></p>`;
+                return `\n\n<section style="margin: 40px 0 20px; padding: 24px; background: #f9f9f9; border-radius: 12px; border: 1px solid #eee;"><div style="font-weight: bold; font-size: 18px; margin-bottom: 8px; color: ${primaryColor};">${safeTitle}</div><div style="font-size: 13px; color: ${secondaryColor}; margin-bottom: 16px; letter-spacing: 0.5px;">${safeTags}</div><div style="font-size: 15px; color: ${primaryColor}; line-height: 1.8;">${safeContent}</div></section><p></p>`;
             
             case 'simple':
-                return `
-<section style="margin: 40px 0 20px; border-left: 4px solid ${primaryColor}; padding-left: 16px;">
-    <div style="font-weight: bold; font-size: 17px; margin-bottom: 4px; color: ${primaryColor};">${safeTitle}</div>
-    ${safeTags ? `<div style="font-size: 13px; color: ${secondaryColor}; margin-bottom: 8px;">${safeTags}</div>` : ''}
-    <div style="font-size: 14px; color: ${secondaryColor}; line-height: 1.6;">${safeContent}</div>
-</section>
-<p></p>`;
+                return `\n\n<section style="margin: 40px 0 20px; border-left: 4px solid ${primaryColor}; padding-left: 16px;"><div style="font-weight: bold; font-size: 17px; margin-bottom: 4px; color: ${primaryColor};">${safeTitle}</div>${safeTags ? `<div style="font-size: 13px; color: ${secondaryColor}; margin-bottom: 8px;">${safeTags}</div>` : ''}<div style="font-size: 14px; color: ${secondaryColor}; line-height: 1.6;">${safeContent}</div></section><p></p>`;
 
             case 'centered':
             default:
-                return `
-<section style="text-align: center; margin: 40px 0 20px;">
-    <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 12px; color: ${primaryColor};">${safeTitle}</h3>
-    <div style="font-size: 13px; color: ${secondaryColor}; margin-bottom: 24px; letter-spacing: 1px;">
-        ${safeTags.split('|').map(tag => `<span style="margin: 0 4px;">${tag.trim()}</span>`).join('<span style="color: #ddd;">|</span>')}
-    </div>
-    <div style="width: 40px; height: 2px; background: ${accentColor}; margin: 0 auto 24px; border-radius: 1px;"></div>
-    <p style="font-size: 15px; color: ${primaryColor}; line-height: 1.8; margin: 0; text-align: center;">${safeContent}</p>
-</section>
-<p></p>`;
+                return `\n\n<section style="text-align: center; margin: 40px 0 20px;"><h3 style="font-size: 20px; font-weight: bold; margin-bottom: 12px; color: ${primaryColor};">${safeTitle}</h3><div style="font-size: 13px; color: ${secondaryColor}; margin-bottom: 24px; letter-spacing: 1px;">${safeTags.split('|').map(tag => `<span style="margin: 0 4px;">${tag.trim()}</span>`).join('<span style="color: #ddd;">|</span>')}</div><div style="width: 40px; height: 2px; background: ${accentColor}; margin: 0 auto 24px; border-radius: 1px;"></div><p style="font-size: 15px; color: ${primaryColor}; line-height: 1.8; margin: 0; text-align: center;">${safeContent}</p></section><p></p>`;
         }
     };
 
@@ -93,7 +92,7 @@ export function FooterTemplateModal({ onClose, onInsert }: FooterTemplateModalPr
         onClose();
     };
 
-    return (
+    return createPortal(
         <div className="footer-template-modal-overlay" onClick={onClose}>
             <div className="footer-template-modal" onClick={e => e.stopPropagation()}>
                 <div className="footer-template-header">
@@ -157,6 +156,9 @@ export function FooterTemplateModal({ onClose, onInsert }: FooterTemplateModalPr
                                     onChange={e => setConfig({...config, tags: e.target.value})}
                                     placeholder={config.templateId === 'centered' ? "标签1 | 标签2" : "副标题内容"}
                                 />
+                                <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
+                                    支持 Markdown 链接格式：[链接文字](URL)
+                                </div>
                             </div>
 
                             <div className="form-group">
@@ -167,6 +169,9 @@ export function FooterTemplateModal({ onClose, onInsert }: FooterTemplateModalPr
                                     placeholder="输入正文内容，支持换行"
                                     rows={6}
                                 />
+                                <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
+                                    支持 Markdown 链接格式：[链接文字](URL)
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -185,6 +190,7 @@ export function FooterTemplateModal({ onClose, onInsert }: FooterTemplateModalPr
                     <button className="btn-confirm" onClick={handleSave}>确认插入</button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
