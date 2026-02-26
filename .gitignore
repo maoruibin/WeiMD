@@ -21,3 +21,5 @@ apps/worker/.npm-cache
 # VuePress
 apps/docs/src/.vuepress/.cache/
 apps/docs/src/.vuepress/.temp/
+
+WeMD-main/
