@@ -8,9 +8,15 @@ export const customDefaultTheme = `/* 自定义样式,实时生效,浏览器实�
 #wemd {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   color: #2c3e50;
+  margin: 0;
   line-height: 1.8;
   font-size: 16px;
   letter-spacing: 0.3px;
+}
+
+/* 第一个子元素移除顶部间距 */
+#wemd > *:first-child {
+  margin-top: 0 !important;
 }
 
 /* 段落,下方未标注标签参数均同此处

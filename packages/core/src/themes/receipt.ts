@@ -14,6 +14,11 @@ export const receiptTheme = `/* 购物小票风格 */
     word-break: break-word;
 }
 
+/* 第一个子元素移除顶部间距 */
+#wemd > *:first-child {
+    margin-top: 0 !important;
+}
+
 /* 正文 */
 #wemd p {
     margin: 18px 0;

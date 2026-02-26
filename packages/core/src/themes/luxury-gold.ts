@@ -11,6 +11,11 @@ export const luxuryGoldTheme = `/* 黑金奢华风格 */
     word-break: break-word;
 }
 
+/* 第一个子元素移除顶部间距 */
+#wemd > *:first-child {
+    margin-top: 0 !important;
+}
+
 /* 正文 - 疏朗的行间距 */
 #wemd p {
     margin: 30px 0;

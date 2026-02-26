@@ -50,6 +50,11 @@ export const templateTheme = `/*
     word-break: break-word;
 }
 
+/* 第一个子元素移除顶部间距 */
+#wemd > *:first-child {
+    margin-top: 0 !important;
+}
+
 /* ============================================
  * 2. 段落样式
  * ============================================

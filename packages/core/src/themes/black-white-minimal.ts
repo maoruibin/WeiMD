@@ -17,6 +17,11 @@ export const blackWhiteMinimalTheme = `/*
     line-height: 1.8;
 }
 
+/* 第一个子元素移除顶部间距 */
+#wemd > *:first-child {
+    margin-top: 0 !important;
+}
+
 /* 2. 段落：纯粹的文字力量 */
 #wemd p {
     margin: 16px 0;

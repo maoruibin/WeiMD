@@ -139,6 +139,9 @@ export function ThemePanel({ open, onClose }: ThemePanelProps) {
     setCssInput(theme.css);
     setIsCreating(false);
     setShowDeleteConfirm(false);
+
+    // 立即应用并保存选择到 localStorage
+    selectTheme(themeId);
   };
 
   const handleCreateNew = () => {

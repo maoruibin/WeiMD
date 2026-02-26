@@ -4,7 +4,8 @@ export const basicTheme = `/* 默认样式，最佳实践 */
 #wemd {
   font-size: 16px;
   color: #000000;
-  padding: 0 8px;
+  margin: 0;
+  padding: 0;
   line-height: 1.6;
   word-spacing: 0px;
   letter-spacing: 0px;
@@ -20,6 +21,11 @@ export const basicTheme = `/* 默认样式，最佳实践 */
   margin: 0;
   line-height: 26px;
   color: #000000;
+}
+
+/* 第一个子元素移除顶部间距 */
+#wemd > *:first-child {
+  margin-top: 0 !important;
 }
 
 /* 标题 */

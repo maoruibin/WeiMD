@@ -107,7 +107,7 @@ export const processHtml = (
 
   // 包裹在 section#wemd 中，复制时添加透明背景防止某些浏览器保留选区背景色
   const bgStyle = inlinePseudoElements
-    ? ' style="background:transparent;background-color:transparent;"'
+    ? ' style="background:transparent;background-color:transparent;margin:0;padding:0;"'
     : "";
   const wrappedHtml = `<section id="${SECTION_ID}"${bgStyle}>${html}</section>`;
 

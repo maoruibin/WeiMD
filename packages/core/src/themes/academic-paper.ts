@@ -11,6 +11,11 @@ export const academicPaperTheme = `/* 学术论文风格 */
     word-break: break-word;
 }
 
+/* 第一个子元素移除顶部间距 */
+#wemd > *:first-child {
+    margin-top: 0 !important;
+}
+
 /* 正文 - 移除首行缩进，改用段间距适应移动端 */
 #wemd p {
     margin: 16px 0;

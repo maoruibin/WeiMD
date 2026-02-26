@@ -12,6 +12,11 @@ export const knowledgeBaseTheme = `/* 知识库风格 */
     word-break: break-word;
 }
 
+/* 第一个子元素移除顶部间距 */
+#wemd > *:first-child {
+    margin-top: 0 !important;
+}
+
 /* 段落 - 紧凑但舒适 */
 #wemd p {
     margin-top: 16px;

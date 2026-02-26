@@ -12,6 +12,11 @@ export const sunsetFilmTheme = `/* 落日胶片风格 */
     word-break: break-word;
 }
 
+/* 第一个子元素移除顶部间距 */
+#wemd > *:first-child {
+    margin-top: 0 !important;
+}
+
 /* 段落 - 像是在读一封旧信 */
 #wemd p {
     margin-top: 26px;

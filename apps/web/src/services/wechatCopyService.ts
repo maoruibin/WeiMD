@@ -26,7 +26,7 @@ export async function copyToWechat(markdown: string, css: string): Promise<void>
         const parser = createMarkdownParser();
         const rawHtml = parser.render(markdown);
         const themedCss = buildCopyCss(css);
-        const styledHtml = processHtml(rawHtml, themedCss);
+        const styledHtml = processHtml(rawHtml, themedCss, true, true);
 
         container.innerHTML = styledHtml;
 

@@ -17,6 +17,11 @@ export const geekOrangeTheme = `/*
     letter-spacing: 0.05em; /* 稍微增加字间距，提升阅读通透感 */
 }
 
+/* 第一个子元素移除顶部间距 */
+#wemd > *:first-child {
+    margin-top: 0 !important;
+}
+
 /* 2. 段落：舒适的阅读节奏 */
 #wemd p {
     margin: 20px 0; /* 加大段间距 */

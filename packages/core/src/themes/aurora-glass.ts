@@ -10,6 +10,11 @@ export const auroraGlassTheme = `/* 极光玻璃风格 */
   word-break: break-word;
 }
 
+/* 第一个子元素移除顶部间距 */
+#wemd > *:first-child {
+  margin-top: 0 !important;
+}
+
 /* 段落 - 增加呼吸感 */
 #wemd p {
   margin-top: 22px;
