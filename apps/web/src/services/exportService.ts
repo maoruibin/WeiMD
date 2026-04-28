@@ -3,6 +3,8 @@ import * as core from '@wemd/core';
 const { processHtml, createMarkdownParser } = core;
 import toast from 'react-hot-toast';
 import katexCss from 'katex/dist/katex.min.css?raw';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 const buildCss = (themeCss: string) => {
     if (!themeCss) return katexCss;
@@ -86,6 +88,47 @@ export const exportService = {
         } catch (error) {
             console.error('Export HTML failed:', error);
             toast.error('导出 HTML 失败');
+        }
+    },
+
+    /**
+     * 导出为 PDF（截图式）
+     */
+    async exportPDF(previewElement: HTMLElement, title?: string) {
+        try {
+            const canvas = await html2canvas(previewElement, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#fff',
+                logging: false,
+            });
+
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position -= pageHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            const filename = `${title || 'WeiMD_Export'}_${getTimestamp()}.pdf`;
+            pdf.save(filename);
+            toast.success('已导出 PDF');
+        } catch (error) {
+            console.error('Export PDF failed:', error);
+            toast.error('导出 PDF 失败');
         }
     }
 };
