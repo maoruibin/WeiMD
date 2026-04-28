@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, ChevronDown, FileDown } from 'lucide-react';
+import { Send, ChevronDown, FileDown, FileText } from 'lucide-react';
 import { useEditorStore } from '../../store/editorStore';
 import { useFileStore } from '../../store/fileStore';
 import { exportService } from '../../services/exportService';
+import toast from 'react-hot-toast';
 import './ExportButton.css';
 
 export function ExportButton() {
@@ -28,6 +29,16 @@ export function ExportButton() {
         setIsOpen(false);
     };
 
+    const handleExportPDF = async () => {
+        const previewContent = document.querySelector('.preview-content');
+        if (!previewContent) {
+            toast.error('预览内容未找到');
+            return;
+        }
+        setIsOpen(false);
+        await exportService.exportPDF(previewContent as HTMLElement, title);
+    };
+
     return (
         <div className="export-split-btn" ref={dropdownRef}>
             <button className="export-main-btn" onClick={copyToWechat} title="复制到公众号">
@@ -48,6 +59,10 @@ export function ExportButton() {
                     <button className="export-menu-item" onClick={handleExportMD}>
                         <FileDown size={16} />
                         <span>导出 Markdown</span>
+                    </button>
+                    <button className="export-menu-item" onClick={handleExportPDF}>
+                        <FileText size={16} />
+                        <span>导出 PDF</span>
                     </button>
                 </div>
             )}
