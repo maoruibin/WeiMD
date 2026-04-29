@@ -38,6 +38,46 @@ const cleanMarkdown = (markdown: string) => {
     });
 };
 
+const convertImagesToDataUrls = async (container: HTMLElement) => {
+    const images = Array.from(container.querySelectorAll('img'));
+    const originals: { img: HTMLImageElement; src: string }[] = [];
+
+    await Promise.all(images.map(async (img) => {
+        const src = img.src;
+        if (!src || src.startsWith('data:')) return;
+        originals.push({ img, src });
+        try {
+            const resp = await fetch(src, { mode: 'cors' });
+            const blob = await resp.blob();
+            img.src = await new Promise<string>((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result as string);
+                reader.readAsDataURL(blob);
+            });
+        } catch {
+            // fetch 失败（无 CORS 头）时通过 canvas 中转
+            try {
+                const tmp = new Image();
+                tmp.crossOrigin = 'anonymous';
+                await new Promise<void>((resolve, reject) => {
+                    tmp.onload = () => resolve();
+                    tmp.onerror = reject;
+                    tmp.src = src;
+                });
+                const c = document.createElement('canvas');
+                c.width = tmp.naturalWidth;
+                c.height = tmp.naturalHeight;
+                c.getContext('2d')!.drawImage(tmp, 0, 0);
+                img.src = c.toDataURL('image/jpeg', 0.92);
+            } catch {
+                // 无法转换，保留原始 src
+            }
+        }
+    }));
+
+    return originals;
+};
+
 export const exportService = {
     /**
      * 导出为 Markdown 文件
@@ -96,12 +136,18 @@ export const exportService = {
      */
     async exportPDF(previewElement: HTMLElement, title?: string) {
         try {
+            // 将跨域图片转为 data URL，避免 html2canvas 的 CORS 限制
+            const originals = await convertImagesToDataUrls(previewElement);
+
             const canvas = await html2canvas(previewElement, {
                 scale: 2,
                 useCORS: true,
                 backgroundColor: '#fff',
                 logging: false,
             });
+
+            // 恢复原始 src
+            originals.forEach(({ img, src }) => { img.src = src; });
 
             const imgWidth = 210;
             const pageHeight = 297;
