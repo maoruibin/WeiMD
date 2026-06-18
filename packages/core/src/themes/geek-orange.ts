@@ -79,8 +79,11 @@ export const geekOrangeTheme = `/*
 /* 4. 重点与强调 */
 #wemd strong {
     font-weight: bold;
-    color: #e67e22; /* 加粗文字变橙色，突出重点 */
+    color: #333333;
+    background-color: #ffe0b2; /* 柔和浅橙 */
+    padding: 2px 4px;
     margin: 0 2px;
+    border-radius: 3px;
 }
 
 #wemd em {
