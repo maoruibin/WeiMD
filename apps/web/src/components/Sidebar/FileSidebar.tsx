@@ -1,7 +1,8 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { useFileSystem } from '../../hooks/useFileSystem';
 import { useThemeStore } from '../../store/themeStore';
-import { Search, Plus, FolderOpen, Edit2, MoreHorizontal, Copy, Trash2 } from 'lucide-react';
+import { useUIStore } from '../../store/uiStore';
+import { Search, Plus, FolderOpen, Edit2, MoreHorizontal, Copy, Trash2, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import toast from 'react-hot-toast';
 import './FileSidebar.css';
@@ -14,6 +15,7 @@ const PAGE_SIZE = 50;
 export function FileSidebar() {
     const { files, currentFile, openFile, createFile, renameFile, deleteFile, selectWorkspace, workspacePath } = useFileSystem();
     const currentThemeName = useThemeStore((state) => state.themeName);
+    const setSidebarOpen = useUIStore((state) => state.setSidebarOpen);
     const [filter, setFilter] = useState('');
     const [renamingPath, setRenamingPath] = useState<string | null>(null);
     const [renameValue, setRenameValue] = useState('');
@@ -122,6 +124,14 @@ export function FileSidebar() {
                 <div className="fs-actions">
                     <button className="fs-btn-secondary fs-btn-icon-only" onClick={createFile} title="新建文章">
                         <Plus size={16} />
+                    </button>
+                    <button
+                        className="fs-btn-secondary fs-btn-icon-only"
+                        onClick={() => setSidebarOpen(false)}
+                        title="关闭"
+                        aria-label="关闭侧边栏"
+                    >
+                        <X size={16} />
                     </button>
                 </div>
             </div>

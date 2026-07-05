@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import toast from 'react-hot-toast';
-import { Search, Plus, Trash2, MoreHorizontal, Edit2, Copy, Save, Database } from 'lucide-react';
+import { Search, Plus, Trash2, MoreHorizontal, Edit2, Copy, Save, Database, X } from 'lucide-react';
 import { useEditorStore } from '../../store/editorStore';
 import { useThemeStore } from '../../store/themeStore';
 import { useHistoryStore } from '../../store/historyStore';
 import type { HistorySnapshot } from '../../store/historyStore';
+import { useUIStore } from '../../store/uiStore';
 import { useStorageContext } from '../../storage/StorageContext';
 import type { StorageAdapter } from '../../storage/StorageAdapter';
 import type { FileItem as StorageFileItem } from '../../storage/types';
@@ -66,6 +67,7 @@ function IndexedHistoryPanel() {
   const activeId = useHistoryStore((state) => state.activeId);
   const setActiveId = useHistoryStore((state) => state.setActiveId);
   const loadHistory = useHistoryStore((state) => state.loadHistory);
+  const setSidebarOpen = useUIStore((state) => state.setSidebarOpen);
 
   const setMarkdown = useEditorStore((state) => state.setMarkdown);
   const resetDocument = useEditorStore((state) => state.resetDocument);
@@ -283,6 +285,14 @@ function IndexedHistoryPanel() {
             <button className="btn-secondary btn-icon-only" onClick={handleCreateArticle} data-tooltip="新增文章">
               <Plus size={16} />
             </button>
+            <button
+              className="btn-secondary btn-icon-only"
+              onClick={() => setSidebarOpen(false)}
+              data-tooltip="关闭"
+              aria-label="关闭侧边栏"
+            >
+              <X size={16} />
+            </button>
           </div>
         </div>
         <div className="history-search">
@@ -497,6 +507,7 @@ function FileSystemHistory({ adapter }: { adapter: StorageAdapter }) {
   // 主题相关状态从 themeStore 获取
   const selectTheme = useThemeStore((state) => state.selectTheme);
   const setCustomCSS = useThemeStore((state) => state.setCustomCSS);
+  const setSidebarOpen = useUIStore((state) => state.setSidebarOpen);
 
   const [files, setFiles] = useState<StorageFileItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -638,6 +649,14 @@ themeName: ${themeState.themeName}
             data-tooltip="更多"
           >
             <MoreHorizontal size={16} />
+          </button>
+          <button
+            className="btn-secondary btn-icon-only"
+            onClick={() => setSidebarOpen(false)}
+            data-tooltip="关闭"
+            aria-label="关闭侧边栏"
+          >
+            <X size={16} />
           </button>
         </div>
       </div>

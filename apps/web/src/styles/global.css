@@ -13,10 +13,10 @@
     --text-secondary: var(--ui-text-secondary);
     --text-tertiary: var(--ui-text-tertiary);
 
-    --glass-bg: color-mix(in srgb, var(--ui-bg-primary) 92%, transparent);
-    --glass-border: color-mix(in srgb, var(--ui-border-color) 40%, transparent);
-    --glass-shadow: var(--ui-shadow-lg);
-    --glass-blur: var(--ui-glass-blur);
+    --glass-bg: var(--ui-bg-primary);
+    --glass-border: var(--ui-border-color);
+    --glass-shadow: var(--ui-shadow-sm);
+    --glass-blur: none;
 
     --border-color: var(--ui-border-color);
     --border-light: var(--ui-border-light);

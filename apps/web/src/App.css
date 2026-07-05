@@ -73,8 +73,8 @@
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr);
-  gap: var(--spacing-xl);
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.6fr);
+  gap: 48px;
   height: 100%;
   min-height: 0;
 }
@@ -107,15 +107,6 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-/* 悬浮微动效 - 更柔和的上浮 */
-.editor-pane:hover,
-.preview-pane:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-premium);
-  border-color: color-mix(in srgb, var(--border-color) 60%, transparent);
 }
 
 /* 响应式布局 */

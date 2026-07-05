@@ -16,7 +16,7 @@ interface UIState {
 export const useUIStore = create<UIState>()(
   persist(
     (set) => ({
-      isSidebarOpen: true,
+      isSidebarOpen: false,
       isAutoParagraph: true, // 默认开启
       showFooterModal: false,
       toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
@@ -28,10 +28,18 @@ export const useUIStore = create<UIState>()(
     }),
     {
       name: 'wemd-ui-storage',
+      version: 2,
       partialize: (state) => ({
         isSidebarOpen: state.isSidebarOpen,
         isAutoParagraph: state.isAutoParagraph
       }),
+      migrate: (persistedState) => {
+        const state = (persistedState ?? {}) as { isSidebarOpen?: boolean; isAutoParagraph?: boolean };
+        return {
+          isSidebarOpen: false,
+          isAutoParagraph: state.isAutoParagraph ?? true,
+        };
+      },
     }
   )
 );
